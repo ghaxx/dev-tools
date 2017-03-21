@@ -12,7 +12,9 @@ object VcsRoots extends App {
 
   val vcsService = new VcsRootService(client)
   vcsService.getAll.foreach {
-    root => println(root)
+    root =>
+      println((root \ "id").extract[String])
+      System.exit(0)
   }
 
 }

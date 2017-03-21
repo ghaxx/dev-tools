@@ -53,7 +53,7 @@ object AddCommitStatus extends App {
         val build = buildService.getBuild(buildId)
         if (build.hasFeature("commit-status-publisher")) {
           val f = build.getFeatureByType("commit-status-publisher")
-          f.properties.
+//          f.properties.
         }
       }
   }

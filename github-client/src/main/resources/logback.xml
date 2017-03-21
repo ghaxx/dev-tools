@@ -8,6 +8,9 @@
     </appender>
 
     <logger name="pl" level="info"/>
+    <logger name="client.github.request.url" level="off"/>
+    <logger name="client.github.request.data" level="off"/>
+    <logger name="client.github.request.response" level="off"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT"/>

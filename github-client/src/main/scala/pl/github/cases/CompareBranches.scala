@@ -8,11 +8,11 @@ object CompareBranches extends App {
   val service = new GitHubService
   try {
     val myUser = service.getMyUser
-    println(s"I'm ${myUser.name.value}")
+    println(s"I'm ${myUser.name.value} (${myUser.login.value})")
     myUser.repositoriesList.foreach {
       repo =>
         try {
-          val develop = repo.branch(Branch.Name("develop")).head.hash.value
+          val develop = repo.branch(Branch.Name("dev")).head.hash.value
           val master = repo.branch(Branch.Name("master")).head.hash.value
           println(s"${repo.name.value}: ${develop} == ${master} === ${develop == master}")
         } catch {

@@ -6,7 +6,7 @@ import pl.teamcity.model.creation.BuildStep
 
 class TcVcsRootsClient(httpClient: TcHttpService) {
 
-  val features = new TcFeaturesClient(httpClient)
+  val properties = new TcFeaturesClient(httpClient)
 
   def getAll: JObject = {
     httpClient.get(s"/app/rest/vcs-roots")

@@ -2,6 +2,7 @@ package pl.github.domain.model.account
 
 import org.json4s.DefaultFormats
 import org.json4s.native.Serialization
+import pl.github.domain.model.account.user.IdentifiedUser
 import pl.github.domain.model.repository.Repository.Id
 import pl.github.domain.model.repository.{LazyRepository, PreloadedRepository, Repository}
 import pl.github.domain.services.http.GitHubHttpClient
@@ -16,7 +17,7 @@ class Organization(val login: Account.Login)(client: GitHubHttpClient) extends A
   }
 
   def repositoriesList: List[Repository] = {
-    client.org.getRepos(login.value).map(PreloadedRepository(this, _)(client))
+    client.org.getRepos(login.value).map(PreloadedRepository(_)(client))
   }
 
 }

@@ -18,7 +18,7 @@ class IdentifiedUser(val login: Account.Login)(client: GitHubHttpClient) extends
   }
 
   def repositoriesList: List[Repository] = {
-    client.user.getRepos(login.value).map(PreloadedRepository(this, _)(client))
+    client.user.getRepos(login.value).map(PreloadedRepository(_)(client))
   }
 
 }
