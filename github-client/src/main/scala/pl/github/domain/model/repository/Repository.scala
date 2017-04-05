@@ -12,6 +12,8 @@ trait Repository {
   def branch(name: Branch.Name): Branch
   def defaultBranch: Branch
 
+  def pulls: List[PullRequest]
+
   // Keys
   def keysList: List[GitHubKey]
   def createKey(key: GitHubKeyCreationData)

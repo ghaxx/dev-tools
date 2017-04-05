@@ -18,12 +18,16 @@ abstract class RepositoryBase extends Repository {
   def deleteKey(id: Id) = ghHttp.repo.deleteKey(owner.login.value, name.value, id.value)
   def commit(hash: Commit.Hash) = Commit(this, hash)(ghHttp)
 
+  override def pulls = {
+    ghHttp.repo.listPulls(owner.login, name)
+  }
+
   def branch(name: Branch.Name) = new Branch(this, name)(ghHttp)
   def defaultBranch = {
     new Branch(this, Branch.Name((json \ "default_branch").extract[String]))(ghHttp)
   }
 
-  def setDefaultBranch(name: Name) = {
+  override def setDefaultBranch(name: Name) = {
     val data = RepoUpdateData(name.value, default_branch = Some(name.value))
     ghHttp.repo.patchRepo(owner.login.value, data)
   }

@@ -3,7 +3,7 @@ package pl.github.domain.services.http
 import org.json4s.native.Serialization
 import org.json4s.{DefaultFormats, JValue}
 import pl.github.domain.model.account.Account
-import pl.github.domain.model.repository.{Branch, Repository}
+import pl.github.domain.model.repository.{Branch, PreloadedPullRequest, PullRequest, Repository}
 import pl.github.domain.model.{GitHubKey, GitHubKeyCreationData, RepoUpdateData}
 
 class GhRepositoryHttpClient(ghHttp: GhHttpConnector) {
@@ -53,6 +53,14 @@ class GhRepositoryHttpClient(ghHttp: GhHttpConnector) {
   def createKey(owner: String, repo: String, data: GitHubKeyCreationData): Unit = {
     val url = s"/repos/$owner/$repo/keys"
     ghHttp.postRequest(url, Serialization.write(data))
+  }
+
+  def listPulls(owner: Account.Login, repo: Repository.Name):  List[PullRequest] = {
+    val url = s"/repos/${owner.value}/${repo.value}/pulls"
+    val response = ghHttp.getRequest(url)
+    Serialization
+      .read[List[JValue]](response.body)
+      .map(new PreloadedPullRequest(_))
   }
 
 

@@ -31,6 +31,7 @@ class GhHttpConnector extends LazyLogging with AutoCloseable {
 
     builder
       .setSslContext(sslContext)
+      .setIoThreadsCount(8)
       .build()
   }
 
