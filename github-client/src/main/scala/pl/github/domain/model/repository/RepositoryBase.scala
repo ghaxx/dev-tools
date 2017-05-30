@@ -20,6 +20,7 @@ abstract class RepositoryBase extends Repository {
 
   override def pulls = {
     ghHttp.repo.listPulls(owner.login, name)
+      .map(new PreloadedPullRequest(_)(ghHttp))
   }
 
   def branch(name: Branch.Name) = new Branch(this, name)(ghHttp)

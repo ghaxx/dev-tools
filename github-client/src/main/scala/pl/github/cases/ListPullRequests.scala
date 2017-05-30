@@ -19,7 +19,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
         if (pulls.nonEmpty) {
           pulls.foldLeft(repo.name.value -> List.empty[String]) {
             case ((r, l), pull) =>
-              r -> (pull.htmlUrl :: l)
+              val txt = s"${pull.user.name.value} - ${pull.htmlUrl}"
+              r -> (txt :: l)
           }
         } else {
           repo.name.value -> List.empty[String]
@@ -35,7 +36,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
             if (pulls.nonEmpty) {
               println(repo)
               pulls.zipWithIndex.foreach {
-                case (pullUrl, i) => println(f" $i%3d: ${pullUrl}")
+                case (pullTxt, i) => println(f" $i%3d. $pullTxt")
               }
             }
           }

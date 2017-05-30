@@ -55,12 +55,11 @@ class GhRepositoryHttpClient(ghHttp: GhHttpConnector) {
     ghHttp.postRequest(url, Serialization.write(data))
   }
 
-  def listPulls(owner: Account.Login, repo: Repository.Name):  List[PullRequest] = {
+  def listPulls(owner: Account.Login, repo: Repository.Name):  List[JValue] = {
     val url = s"/repos/${owner.value}/${repo.value}/pulls"
     val response = ghHttp.getRequest(url)
     Serialization
       .read[List[JValue]](response.body)
-      .map(new PreloadedPullRequest(_))
   }
 
 
