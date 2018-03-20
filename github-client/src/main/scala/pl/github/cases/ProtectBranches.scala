@@ -5,8 +5,8 @@ import pl.github.domain.services.GitHubService
 
 object ProtectBranches extends App {
 
-  val service = new GitHubService
-  val myUser = service.getMyUser
+  implicit val client = new GitHubHttpClient
+  val myUser = Account.getMyUser
 //  println(s"I'm ${myUser.name.value}")
   myUser.repositoriesList.foreach {
     repo =>

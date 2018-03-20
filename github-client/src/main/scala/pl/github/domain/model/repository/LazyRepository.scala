@@ -9,6 +9,7 @@ import pl.github.domain.services.http.GitHubHttpClient
 case class LazyRepository(
   owner: Account,
   name: Repository.Name
-)(val ghHttp: GitHubHttpClient) extends RepositoryBase {
+)(implicit val ghHttp: GitHubHttpClient) extends RepositoryBase {
   lazy val json = ghHttp.repo.getRepo(owner.login.value, name.value)
 }
+

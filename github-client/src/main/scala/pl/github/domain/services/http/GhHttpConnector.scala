@@ -1,12 +1,14 @@
 package pl.github.domain.services.http
 
+import java.util
+
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.{LazyLogging, Logger}
 import io.netty.handler.codec.http.HttpHeaders
 import io.netty.handler.ssl.{SslContextBuilder, SslProvider}
 import org.asynchttpclient.netty.ssl.InsecureTrustManagerFactory
 import org.asynchttpclient.util.HttpConstants.Methods
-import org.asynchttpclient.{DefaultAsyncHttpClient, DefaultAsyncHttpClientConfig, HttpResponseStatus, Request, RequestBuilder, Response}
+import org.asynchttpclient._
 
 import scala.concurrent.{Await, Future}
 
@@ -37,13 +39,17 @@ class GhHttpConnector extends LazyLogging with AutoCloseable {
 
   private val client = new DefaultAsyncHttpClient(clientConfig)
 
-  def getRequest(url: String) = {
+  def getRequest(url: String, params: Map[String, String] = Map.empty) = {
+    import scala.collection.JavaConverters._
     val fullUrl = buildFullUrl(url)
+    val paramsList: java.util.List[Param] = params.map {
+      case (k, v) => new Param(k, v)
+    }.toList.asJava
     executeRequest(new RequestBuilder()
       .setMethod(Methods.GET)
       .setUrl(fullUrl)
-      .setHeader(HttpHeaders.Names.ACCEPT, HttpHeaders.Values.APPLICATION_JSON)
-      .build())
+      .setQueryParams(paramsList)
+      .setHeader(HttpHeaders.Names.ACCEPT, HttpHeaders.Values.APPLICATION_JSON))
   }
 
   def postRequest(url: String, data: String, accept: String = HttpHeaders.Values.APPLICATION_JSON) = {
@@ -52,8 +58,7 @@ class GhHttpConnector extends LazyLogging with AutoCloseable {
       .setMethod(Methods.POST)
       .setUrl(fullUrl)
       .setBody(data)
-      .setHeader(HttpHeaders.Names.ACCEPT, accept)
-      .build())
+      .setHeader(HttpHeaders.Names.ACCEPT, accept))
   }
 
   def patchRequest(url: String, data: String, accept: String = HttpHeaders.Values.APPLICATION_JSON) = {
@@ -62,8 +67,7 @@ class GhHttpConnector extends LazyLogging with AutoCloseable {
       .setMethod(Methods.PATCH)
       .setUrl(fullUrl)
       .setBody(data)
-      .setHeader(HttpHeaders.Names.ACCEPT, accept)
-      .build())
+      .setHeader(HttpHeaders.Names.ACCEPT, accept))
   }
 
   def putRequest(url: String, data: String, accept: String = HttpHeaders.Values.APPLICATION_JSON) = {
@@ -72,8 +76,7 @@ class GhHttpConnector extends LazyLogging with AutoCloseable {
       .setMethod(Methods.PUT)
       .setUrl(fullUrl)
       .setBody(data)
-      .setHeader(HttpHeaders.Names.ACCEPT, accept)
-      .build())
+      .setHeader(HttpHeaders.Names.ACCEPT, accept))
   }
 
   def deleteRequest(url: String, data: String = null, accept: String = HttpHeaders.Values.APPLICATION_JSON) = {
@@ -82,15 +85,15 @@ class GhHttpConnector extends LazyLogging with AutoCloseable {
       .setMethod(Methods.DELETE)
       .setUrl(fullUrl)
       .setBody(data)
-      .setHeader(HttpHeaders.Names.ACCEPT, accept)
-      .build())
+      .setHeader(HttpHeaders.Names.ACCEPT, accept))
   }
 
   private def buildFullUrl(url: String) = {
     s"$baseUri${url}?access_token=${token}"
   }
 
-  def executeRequest(request: Request): GhResponse = {
+  def executeRequest(requestBuilder: RequestBuilder): GhResponse = {
+    val request = requestBuilder.setHeader("Authorization", s"token ${token}").build()
     Loggers.url.info(s"${request.getMethod} url ${request.getUrl}")
     Loggers.data.info(request.getStringData)
     val response = client.asyncExecute(request).futureValue

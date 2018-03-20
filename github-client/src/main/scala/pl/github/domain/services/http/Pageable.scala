@@ -20,7 +20,7 @@ object Pageable {
         link <- currentResponse.link
         next <- link.next
       } yield {
-        ghHttp.executeRequest(new RequestBuilder().setMethod(Methods.GET).setUrl(next).build())
+        ghHttp.executeRequest(new RequestBuilder().setMethod(Methods.GET).setUrl(next))
       }
     } while (currentResponseOpt.isDefined)
     buffer.toList

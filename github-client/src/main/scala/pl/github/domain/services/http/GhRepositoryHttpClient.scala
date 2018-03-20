@@ -24,7 +24,7 @@ class GhRepositoryHttpClient(ghHttp: GhHttpConnector) {
     repo: String,
     hash: String,
     state: String,
-    url: String,
+    targetUrl: String,
     description: String,
     context: String
   ) = {
@@ -32,12 +32,21 @@ class GhRepositoryHttpClient(ghHttp: GhHttpConnector) {
     val data =
       s"""{
          |  "state": "$state",
-         |  "target_url": "$url",
+         |  "target_url": "$targetUrl",
          |  "description": "$description",
          |  "context": "$context"
          |}
         """.stripMargin
     ghHttp.postRequest(url, data)
+  }
+
+  def getCommitStatus(
+    owner: String,
+    repo: String,
+    hash: String
+  ) = {
+    val url = s"/repos/$owner/$repo/statuses/$hash"
+    ghHttp.getRequest(url)
   }
 
   def listKeys(owner: String, repo: String): List[GitHubKey] = {
@@ -58,6 +67,13 @@ class GhRepositoryHttpClient(ghHttp: GhHttpConnector) {
   def listPulls(owner: Account.Login, repo: Repository.Name):  List[JValue] = {
     val url = s"/repos/${owner.value}/${repo.value}/pulls"
     val response = ghHttp.getRequest(url)
+    Serialization
+      .read[List[JValue]](response.body)
+  }
+
+  def listCommits(owner: Account.Login, repo: Repository.Name, author: Account.Login, since: String):  List[JValue] = {
+    val url = s"/repos/${owner.value}/${repo.value}/commits"
+    val response = ghHttp.getRequest(url, Map("author" -> author.value, "since" -> since))
     Serialization
       .read[List[JValue]](response.body)
   }

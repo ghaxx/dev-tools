@@ -10,8 +10,8 @@ object ListPullRequests extends App {
 import scala.concurrent.ExecutionContext.Implicits.global
 //  implicit val ec = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(16))
 
-  val service = new GitHubService
-  val user = service.getMyUser
+  implicit val client = new GitHubHttpClient
+  val user = Account.getMyUser
   val pullsPerRepoFut = user.repositoriesList.map {
     repo =>
       Future {

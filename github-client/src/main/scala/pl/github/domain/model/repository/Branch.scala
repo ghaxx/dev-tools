@@ -13,7 +13,7 @@ case class Branch(
 
   def protect(protector: Account*) =
     ghHttp.repo.protectBranch(repo.owner.login, repo.name, name, protector.map(_.login): _*)
-  def head = Commit(repo, Commit.Hash((json \ "commit" \ "sha").extract[String]))(ghHttp)
+  def head = RepositoryStatus(repo, RepositoryStatus.Hash((json \ "commit" \ "sha").extract[String]))(ghHttp)
 }
 
 object Branch {

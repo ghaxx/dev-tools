@@ -1,6 +1,6 @@
 package pl.github.domain.model.repository
 
-import org.json4s.DefaultFormats
+import org.json4s.{DefaultFormats, JObject, JString}
 import pl.github.domain.model.GitHubKey.Id
 import pl.github.domain.model.account.Account
 import pl.github.domain.model.{GitHubKeyCreationData, RepoUpdateData}
@@ -16,11 +16,22 @@ abstract class RepositoryBase extends Repository {
   def keysList = ghHttp.repo.listKeys(owner.login.value, name.value)
   def createKey(key: GitHubKeyCreationData) = ghHttp.repo.createKey(owner.login.value, name.value, key)
   def deleteKey(id: Id) = ghHttp.repo.deleteKey(owner.login.value, name.value, id.value)
-  def commit(hash: Commit.Hash) = Commit(this, hash)(ghHttp)
+  def status(hash: RepositoryStatus.Hash) = RepositoryStatus(this, hash)(ghHttp)
 
   override def pulls = {
     ghHttp.repo.listPulls(owner.login, name)
       .map(new PreloadedPullRequest(_)(ghHttp))
+  }
+
+
+  override def commits(author: Account, since: String): List[Commit] = {
+    ghHttp.repo.listCommits(owner.login, name, author.login, since).map {
+      case json: JObject =>
+        val author = (json \ "commit" \ "author" \ "name").asInstanceOf[JString].s
+        val date = (json \ "commit" \ "author" \ "date").asInstanceOf[JString].s
+        val message = (json \ "commit" \ "message").asInstanceOf[JString].s
+        Commit(author, date, message)
+    }
   }
 
   def branch(name: Branch.Name) = new Branch(this, name)(ghHttp)

@@ -6,9 +6,9 @@ import pl.github.domain.model.repository.Repository
 import pl.github.domain.services.GitHubService
 
 object UploadKeys extends App {
-  val service = new GitHubService
+  implicit val client = new GitHubHttpClient
   try {
-    val myUser = service.getOrganization(Account.Login("OTCCCDEV"))
+    val myUser = service.getOrganization(Account.Login("org"))
     println(s"I'm ${myUser.login}")
 //    myUser.repositoriesList.foreach {
 //      repo =>

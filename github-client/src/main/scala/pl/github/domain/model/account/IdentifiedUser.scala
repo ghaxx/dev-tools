@@ -1,12 +1,10 @@
-package pl.github.domain.model.account.user
+package pl.github.domain.model.account
 
 import org.json4s.DefaultFormats
-import pl.github.domain.model.account.{Account, User}
-import pl.github.domain.model.repository.Repository.Id
-import pl.github.domain.model.repository.{LazyRepository, Repository, PreloadedRepository}
+import pl.github.domain.model.repository.{LazyRepository, PreloadedRepository, Repository}
 import pl.github.domain.services.http.GitHubHttpClient
 
-class IdentifiedUser(val login: Account.Login)(client: GitHubHttpClient) extends User {
+case class IdentifiedUser(login: Account.Login)(implicit val client: GitHubHttpClient) extends User {
 
   private implicit val formats = DefaultFormats
   private lazy val details = client.user.getDetails(login.value)

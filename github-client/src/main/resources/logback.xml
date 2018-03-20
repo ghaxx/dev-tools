@@ -7,10 +7,10 @@
         </encoder>
     </appender>
 
-    <logger name="pl" level="info"/>
-    <logger name="client.github.request.url" level="off"/>
-    <logger name="client.github.request.data" level="off"/>
-    <logger name="client.github.request.response" level="off"/>
+    <logger name="pl" level="warn"/>
+    <logger name="client.github.request.url" level="warn"/>
+    <logger name="client.github.request.data" level="warn"/>
+    <logger name="client.github.request.response" level="warn"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT"/>

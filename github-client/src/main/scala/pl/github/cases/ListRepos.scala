@@ -4,8 +4,8 @@ import pl.github.domain.model.account.Account
 import pl.github.domain.services.GitHubService
 
 object ListRepos extends App {
-  val service = new GitHubService
-  val myUser = service.getMyUser
+  implicit val client = new GitHubHttpClient
+  val myUser = Account.getMyUser
   println(s"I'm ${myUser.name.value} (${myUser.login.value})")
   myUser.repositoriesList.foreach(repo => println(repo.name))
 

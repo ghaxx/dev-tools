@@ -1,8 +1,7 @@
 package pl.github.domain.model.repository
 
 import org.json4s.{DefaultFormats, JValue}
-import pl.github.domain.model.account.{Account, User}
-import pl.github.domain.model.account.user.IdentifiedUser
+import pl.github.domain.model.account.{Account, IdentifiedUser, User}
 import pl.github.domain.services.http.GitHubHttpClient
 
 trait PullRequest {

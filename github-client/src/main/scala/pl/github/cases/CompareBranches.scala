@@ -5,9 +5,9 @@ import pl.github.domain.services.GitHubService
 
 object CompareBranches extends App {
 
-  val service = new GitHubService
+  implicit val client = new GitHubHttpClient
   try {
-    val myUser = service.getMyUser
+    val myUser = Account.getMyUser
     println(s"I'm ${myUser.name.value} (${myUser.login.value})")
     myUser.repositoriesList.foreach {
       repo =>
